@@ -2,17 +2,24 @@ import { Elysia, t } from "elysia";
 import { bearer } from "@elysiajs/bearer";
 import { eq } from "drizzle-orm";
 import { db, urls } from "./db";
+import { cacheGet, cacheSet, cacheDel } from "./cache";
 
 const app = new Elysia()
   // Public — Android apps resolve without an API key: GET /resolve?name=foo
   .get(
     "/resolve",
     async ({ query, status }) => {
+      const cached = await cacheGet(query.name);
+      if (cached) return { name: query.name, url: cached };
+
       const [row] = await db
         .select()
         .from(urls)
         .where(eq(urls.name, query.name));
-      return row ?? status(404, { error: "not found" });
+      if (!row) return status(404, { error: "not found" });
+
+      await cacheSet(row.name, row.url);
+      return row;
     },
     { query: t.Object({ name: t.String() }) }
   )
@@ -46,7 +53,10 @@ const app = new Elysia()
         .set({ url: body.url })
         .where(eq(urls.name, params.name))
         .returning();
-      return updated[0] ?? status(404, { error: "not found" });
+      if (!updated[0]) return status(404, { error: "not found" });
+
+      await cacheDel(params.name); // invalidate stale cache
+      return updated[0];
     },
     { body: t.Object({ url: t.String() }) }
   );
