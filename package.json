@@ -1,0 +1,22 @@
+{
+  "name": "baseurl",
+  "version": "1.0.50",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun migrate.ts"
+  },
+  "dependencies": {
+    "@elysiajs/bearer": "^1.4.4",
+    "@neondatabase/serverless": "^1.1.0",
+    "drizzle-orm": "^0.45.2",
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "drizzle-kit": "^0.31.10"
+  },
+  "module": "src/index.js"
+}
