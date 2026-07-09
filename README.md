@@ -21,7 +21,10 @@ bun run db:push           # create the `urls` table
 bun run dev               # local: http://localhost:3000
 ```
 
-## Deploy (Vercel)
+## Deploy (Vercel — Dockerfile)
 
-Set `DATABASE_URL` and `API_KEY` in project env vars, then `vercel deploy`.
-Uses the Neon HTTP driver (no pooling) — right for serverless functions.
+Vercel builds `Dockerfile.vercel` directly (Fluid compute). Set `DATABASE_URL`,
+`API_KEY` (and optionally the Upstash vars) in project env, then `vercel deploy`.
+The server listens on `$PORT` (Vercel defaults it to 80).
+
+Plain `Dockerfile` is the same image for any other host (`docker run -p 3000:3000 --env-file .env`).

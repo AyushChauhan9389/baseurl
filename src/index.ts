@@ -61,7 +61,7 @@ const app = new Elysia()
     { body: t.Object({ url: t.String() }) }
   );
 
-// Vercel uses the default export; run standalone locally with `bun src/index.ts`
-if (!process.env.VERCEL) app.listen(3000);
+// Container mode (incl. Dockerfile-on-Vercel): listen on $PORT (Vercel defaults it to 80)
+app.listen(Number(process.env.PORT) || 3000);
 
 export default app;
